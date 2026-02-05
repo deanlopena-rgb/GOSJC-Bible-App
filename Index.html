@@ -1,648 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bible App - Complete</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<title>GOSJC Bible App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .version {
-            font-size: 1.1em;
-            opacity: 0.9;
-            font-style: italic;
-        }
-
-        .controls {
-            padding: 20px;
-            background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .control-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        select, input[type="text"] {
-            flex: 1;
-            min-width: 150px;
-            padding: 12px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        select:hover, input[type="text"]:hover {
-            border-color: #667eea;
-        }
-
-        select:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #667eea;
-            font-size: 1.2em;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .reader {
-            padding: 30px;
-            min-height: 400px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        #chapterTitle {
-            color: #2c3e50;
-            font-size: 2em;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .verse {
-            margin-bottom: 15px;
-            line-height: 1.8;
-            font-size: 1.1em;
-            color: #333;
-        }
-
-        .verse-number {
-            display: inline-block;
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 8px;
-            font-size: 0.9em;
-            vertical-align: super;
-        }
-
-        .verse-text {
-            display: inline;
-        }
-
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .navigation {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            background: #f8f9fa;
-            border-top: 2px solid #e9ecef;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px 25px;
-            font-size: 1.1em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            opacity: 0.6;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-            border: 1px solid #f5c6cb;
-        }
-
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-            border: 1px solid #bee5eb;
-            font-size: 0.95em;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-            border: 1px solid #c3e6cb;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            .control-row {
-                flex-direction: column;
-            }
-
-            select, input[type="text"] {
-                width: 100%;
-            }
-
-            .reader {
-                padding: 20px;
-                max-height: 500px;
-            }
-
-            #chapterTitle {
-                font-size: 1.5em;
-            }
-
-            .verse {
-                font-size: 1em;
-            }
-
-            button {
-                padding: 12px 20px;
-                font-size: 1em;
-            }
-        }
-    </style>
+<style>
+body {
+    font-family: Georgia, serif;
+    background: #f4f6fb;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+select, input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 16px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+}
+.verse {
+    margin: 10px 0;
+    line-height: 1.7;
+}
+.verse sup {
+    color: #667eea;
+    font-weight: bold;
+}
+.error {
+    background: #f8d7da;
+    padding: 15px;
+    color: #721c24;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>📖 Holy Bible</h1>
-            <p class="version">Complete Bible - All Books & Chapters</p>
-        </header>
 
-        <div class="controls">
-            <div class="control-row">
-                <select id="bookSelect" onchange="onBookChange()">
-                    <option value="">Select a Book...</option>
-                </select>
+<header>
+    <h1>📖 GOSJC Holy Bible</h1>
+    <p>King James Version & New King James Version</p>
+</header>
 
-                <select id="chapterSelect" onchange="loadChapter()">
-                    <option value="">Select Chapter...</option>
-                </select>
-            </div>
+<div class="container">
 
-            <div class="control-row">
-                <input type="text" id="searchBox" placeholder="Search verses..." onkeyup="searchVerses()">
-            </div>
-        </div>
+    <select id="versionSelect" onchange="loadBooks()">
+        <option value="kjv">King James Version (KJV)</option>
+        <option value="nkjv">New King James Version (NKJV)</option>
+    </select>
 
-        <div class="reader">
-            <div id="loading" class="loading" style="display: none;">
-                <div class="spinner"></div>
-                <p>Loading Bible content...</p>
-            </div>
-            <div id="content">
-                <h2 id="chapterTitle">Welcome! Select a book to begin reading.</h2>
-                <div id="verses"></div>
-            </div>
-        </div>
+    <select id="bookSelect" onchange="loadChapters()">
+        <option>Select Book</option>
+    </select>
 
-        <div class="navigation">
-            <button id="prevBtn" onclick="previousChapter()" disabled>← Previous</button>
-            <button id="nextBtn" onclick="nextChapter()" disabled>Next →</button>
-        </div>
-    </div>
+    <select id="chapterSelect" onchange="loadChapter()">
+        <option>Select Chapter</option>
+    </select>
 
-    <script>
-        // API Configuration - Using YOUR API key
-        const API_KEY = 'K8pFFEcJTRPgJeC4bWiau';
-        const API_BASE = 'https://api.scripture.api.bible/v1';
-        
-        // We'll fetch available bibles and use the first one
-        let BIBLE_ID = null;
+    <div id="content"></div>
 
-        // State
-        let allBooks = [];
-        let currentBook = null;
-        let currentChapter = null;
-        let currentChapterData = null;
+</div>
 
-        // Initialize app
-        async function init() {
-            showLoading(true);
-            console.log('Initializing Bible app...');
-            
-            try {
-                // First, get available bibles
-                await getBibles();
-                
-                // Then load books
-                await loadBooks();
-                showLoading(false);
-                
-                showSuccess('✅ Bible loaded successfully! Select a book to start reading.');
-                
-            } catch (error) {
-                console.error('Init error:', error);
-                showError(`Failed to load Bible. Error: ${error.message}<br><br>
-                    <div class="info">
-                        <strong>Troubleshooting:</strong><br>
-                        1. Make sure you have internet connection<br>
-                        2. Open this file in Chrome or Firefox browser<br>
-                        3. Check the browser console for details (F12)
-                    </div>`);
-                showLoading(false);
-            }
-        }
+<script>
+/* ================= CONFIG ================= */
 
-        // Get available Bibles
-        async function getBibles() {
-            try {
-                console.log('Fetching available Bibles...');
-                
-                const response = await fetch(`${API_BASE}/bibles`, {
-                    method: 'GET',
-                    headers: {
-                        'api-key': API_KEY
-                    }
-                });
+const API_KEY = "YOUR_API_KEY_HERE";
+const API_BASE = "https://api.scripture.api.bible/v1";
 
-                if (!response.ok) {
-                    throw new Error(`API returned status ${response.status}`);
-                }
+// Known Bible IDs
+const BIBLES = {
+    kjv: "de4e12af7f28f599-02",
+    nkjv: "a93a925c4f7a6c58-01"
+};
 
-                const data = await response.json();
-                console.log('Bibles response:', data);
-                
-                if (data.data && data.data.length > 0) {
-                    // Use the first available Bible
-                    BIBLE_ID = data.data[0].id;
-                    console.log('Using Bible ID:', BIBLE_ID, '-', data.data[0].name);
-                } else {
-                    throw new Error('No Bibles available with this API key');
-                }
+let currentBible = BIBLES.kjv;
+let books = [];
 
-            } catch (error) {
-                console.error('Error in getBibles:', error);
-                throw error;
-            }
-        }
+/* ================= FUNCTIONS ================= */
 
-        // Load all books from API
-        async function loadBooks() {
-            try {
-                console.log('Fetching books from API...');
-                console.log('Using Bible ID:', BIBLE_ID);
-                
-                const response = await fetch(`${API_BASE}/bibles/${BIBLE_ID}/books`, {
-                    method: 'GET',
-                    headers: {
-                        'api-key': API_KEY
-                    }
-                });
+async function loadBooks() {
+    currentBible = BIBLES[versionSelect.value];
+    content.innerHTML = "Loading books...";
 
-                console.log('Response status:', response.status);
+    const res = await fetch(`${API_BASE}/bibles/${currentBible}/books`, {
+        headers: { "api-key": API_KEY }
+    });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('API Error:', errorText);
-                    throw new Error(`API returned status ${response.status}`);
-                }
+    const data = await res.json();
+    books = data.data;
 
-                const data = await response.json();
-                console.log('Books API Response:', data);
-                
-                if (!data.data || data.data.length === 0) {
-                    throw new Error('No books found in API response');
-                }
+    bookSelect.innerHTML = `<option>Select Book</option>`;
+    chapterSelect.innerHTML = `<option>Select Chapter</option>`;
+    content.innerHTML = "";
 
-                allBooks = data.data;
-                console.log(`✅ Loaded ${allBooks.length} books`);
+    books.forEach(b => {
+        bookSelect.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+    });
+}
 
-                // Populate book dropdown
-                const bookSelect = document.getElementById('bookSelect');
-                bookSelect.innerHTML = '<option value="">Select a Book...</option>';
-                
-                allBooks.forEach(book => {
-                    const option = document.createElement('option');
-                    option.value = book.id;
-                    option.textContent = book.name;
-                    bookSelect.appendChild(option);
-                });
+async function loadChapters() {
+    const bookId = bookSelect.value;
+    if (!bookId) return;
 
-                console.log('✅ Book dropdown populated with', allBooks.length, 'books');
+    content.innerHTML = "Loading chapters...";
 
-            } catch (error) {
-                console.error('Error in loadBooks:', error);
-                throw error;
-            }
-        }
+    const res = await fetch(`${API_BASE}/bibles/${currentBible}/books/${bookId}/chapters`, {
+        headers: { "api-key": API_KEY }
+    });
 
-        // When book is selected
-        async function onBookChange() {
-            const bookSelect = document.getElementById('bookSelect');
-            const bookId = bookSelect.value;
+    const data = await res.json();
+    const chapters = data.data.filter(c => c.number);
 
-            if (!bookId) return;
+    chapterSelect.innerHTML = `<option>Select Chapter</option>`;
+    chapters.forEach(c => {
+        chapterSelect.innerHTML += `<option value="${c.id}">Chapter ${c.number}</option>`;
+    });
 
-            currentBook = allBooks.find(b => b.id === bookId);
-            console.log('📖 Book selected:', currentBook.name);
-            
-            showLoading(true);
-            try {
-                await loadChapters(bookId);
-                showLoading(false);
-            } catch (error) {
-                console.error('Error in onBookChange:', error);
-                showError('Failed to load chapters: ' + error.message);
-                showLoading(false);
-            }
-        }
+    content.innerHTML = "";
+}
 
-        // Load chapters for selected book
-        async function loadChapters(bookId) {
-            try {
-                console.log('Fetching chapters for book:', bookId);
-                
-                const response = await fetch(`${API_BASE}/bibles/${BIBLE_ID}/books/${bookId}/chapters`, {
-                    method: 'GET',
-                    headers: {
-                        'api-key': API_KEY
-                    }
-                });
+async function loadChapter() {
+    const chapterId = chapterSelect.value;
+    if (!chapterId) return;
 
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch chapters (Status: ${response.status})`);
-                }
+    content.innerHTML = "Loading chapter...";
 
-                const data = await response.json();
-                console.log('Chapters response:', data);
-                
-                const chapters = data.data;
+    const res = await fetch(
+        `${API_BASE}/bibles/${currentBible}/chapters/${chapterId}?content-type=text&include-verse-numbers=true`,
+        { headers: { "api-key": API_KEY } }
+    );
 
-                // Filter out intro chapters
-                const validChapters = chapters.filter(ch => 
-                    !ch.id.toLowerCase().includes('intro') && 
-                    ch.number && 
-                    ch.number !== 'intro'
-                );
-                console.log(`✅ Found ${validChapters.length} chapters`);
+    const data = await res.json();
+    displayChapter(data.data.content, data.data.reference);
+}
 
-                // Populate chapter dropdown
-                const chapterSelect = document.getElementById('chapterSelect');
-                chapterSelect.innerHTML = '<option value="">Select Chapter...</option>';
-                
-                validChapters.forEach(chapter => {
-                    const option = document.createElement('option');
-                    option.value = chapter.id;
-                    option.textContent = `Chapter ${chapter.number}`;
-                    chapterSelect.appendChild(option);
-                });
+function displayChapter(text, reference) {
+    let html = `<h2>${reference}</h2>`;
 
-                // Auto-select first chapter
-                if (validChapters.length > 0) {
-                    chapterSelect.value = validChapters[0].id;
-                    await loadChapter();
-                }
+    text.replace(/\[(\d+)\]\s*([^\[]+)/g, (m, v, t) => {
+        html += `<div class="verse"><sup>${v}</sup> ${t}</div>`;
+    });
 
-            } catch (error) {
-                console.error('Error in loadChapters:', error);
-                throw error;
-            }
-        }
+    content.innerHTML = html;
+}
 
-        // Load chapter content
-        async function loadChapter() {
-            const chapterSelect = document.getElementById('chapterSelect');
-            const chapterId = chapterSelect.value;
+/* ================= INIT ================= */
+loadBooks();
+</script>
 
-            if (!chapterId) return;
-
-            console.log('📄 Loading chapter:', chapterId);
-
-            showLoading(true);
-            try {
-                const url = `${API_BASE}/bibles/${BIBLE_ID}/chapters/${chapterId}?content-type=text&include-notes=false&include-titles=true&include-chapter-numbers=false&include-verse-numbers=true&include-verse-spans=false`;
-                
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'api-key': API_KEY
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch chapter (Status: ${response.status})`);
-                }
-
-                const data = await response.json();
-                console.log('✅ Chapter loaded successfully');
-                
-                currentChapterData = data.data;
-                displayChapter(data.data);
-                updateNavigationButtons();
-                showLoading(false);
-
-            } catch (error) {
-                console.error('Error in loadChapter:', error);
-                showError('Failed to load chapter: ' + error.message);
-                showLoading(false);
-            }
-        }
-
-        // Display chapter verses
-        function displayChapter(chapterData) {
-            const titleElement = document.getElementById('chapterTitle');
-            const versesElement = document.getElementById('verses');
-
-            // Set title
-            titleElement.textContent = chapterData.reference;
-
-            // Parse and display verses
-            const content = chapterData.content;
-            versesElement.innerHTML = '';
-
-            // Split by verse numbers
-            const versePattern = /\[(\d+)\]\s*([^\[]+)/g;
-            let match;
-            let verseCount = 0;
-
-            while ((match = versePattern.exec(content)) !== null) {
-                const verseNumber = match[1];
-                const verseText = match[2].trim();
-
-                const verseDiv = document.createElement('div');
-                verseDiv.className = 'verse';
-                verseDiv.innerHTML = `
-                    <span class="verse-number">${verseNumber}</span>
-                    <span class="verse-text">${verseText}</span>
-                `;
-                versesElement.appendChild(verseDiv);
-                verseCount++;
-            }
-
-            console.log(`✅ Displayed ${verseCount} verses`);
-
-            // If no verses found, display as plain text with superscript numbers
-            if (versesElement.children.length === 0) {
-                versesElement.innerHTML = `<p style="line-height: 1.8;">${content.replace(/\[(\d+)\]/g, '<sup style="color: #667eea; font-weight: bold;">$1</sup>')}</p>`;
-            }
-
-            // Clear search
-            document.getElementById('searchBox').value = '';
-        }
-
-        // Update navigation buttons
-        function updateNavigationButtons() {
-            const chapterSelect = document.getElementById('chapterSelect');
-            const currentIndex = chapterSelect.selectedIndex;
-            const totalChapters = chapterSelect.options.length - 1;
-
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-
-            prevBtn.disabled = currentIndex <= 1;
-            nextBtn.disabled = currentIndex >= totalChapters;
-        }
-
-        // Navigate to previous chapter
-        async function previousChapter() {
-            const chapterSelect = document.getElementById('chapterSelect');
-            if (chapterSelect.selectedIndex > 1) {
-                chapterSelect.selectedIndex--;
-                await loadChapter();
-            }
-        }
-
-        // Navigate to next chapter
-        async function nextChapter() {
-            const chapterSelect = document.getElementById('chapterSelect');
-            const totalChapters = chapterSelect.options.length - 1;
-            if (chapterSelect.selectedIndex < totalChapters) {
-                chapterSelect.selectedIndex++;
-                await loadChapter();
-            }
-        }
-
-        // Search verses
-        function searchVerses() {
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            const verses = document.querySelectorAll('.verse');
-
-            verses.forEach(verse => {
-                const verseText = verse.querySelector('.verse-text');
-                if (!verseText) return;
-
-                const originalText = verseText.textContent;
-
-                if (searchTerm === '') {
-                    verseText.innerHTML = originalText;
-                    verse.style.display = 'block';
-                } else if (originalText.toLowerCase().includes(searchTerm)) {
-                    const regex = new RegExp(`(${searchTerm})`, 'gi');
-                    verseText.innerHTML = originalText.replace(regex, '<span class="highlight">$1</span>');
-                    verse.style.display = 'block';
-                } else {
-                    verse.style.display = 'none';
-                }
-            });
-        }
-
-        // Show/hide loading
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'block' : 'none';
-            document.getElementById('content').style.display = show ? 'none' : 'block';
-        }
-
-        // Show error
-        function showError(message) {
-            const versesElement = document.getElementById('verses');
-            versesElement.innerHTML = `<div class="error">${message}</div>`;
-        }
-
-        // Show success
-        function showSuccess(message) {
-            const versesElement = document.getElementById('verses');
-            versesElement.innerHTML = `<div class="success">${message}</div>`;
-        }
-
-        // Start app
-        window.onload = init;
-    </script>
 </body>
 </html>
